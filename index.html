@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#10140f" />
+  <title>Hivefall</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">HF</div>
+        <div>
+          <div class="brand-title">HIVEFALL</div>
+          <div class="brand-sub" id="eraLabel">Founding Year 1</div>
+        </div>
+      </div>
+
+      <div class="resources" id="resources">
+        <div class="resource"><span>Food</span><b id="foodValue">0</b></div>
+        <div class="resource"><span>Fiber</span><b id="fiberValue">0</b></div>
+        <div class="resource"><span>Brood</span><b id="broodValue">0</b></div>
+        <div class="resource"><span>Population</span><b id="popValue">0</b></div>
+        <div class="resource"><span>Army</span><b id="armyValue">0</b></div>
+        <div class="resource"><span>Influence</span><b id="influenceValue">0</b></div>
+      </div>
+
+      <div class="speed-controls">
+        <button class="icon-btn" id="pauseBtn" aria-label="Pause">II</button>
+        <button class="speed-btn active" data-speed="1">1x</button>
+        <button class="speed-btn" data-speed="2">2x</button>
+        <button class="speed-btn" data-speed="4">4x</button>
+        <button class="icon-btn" id="soundBtn" aria-label="Toggle sound">SFX</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar left-panel">
+        <section class="panel colony-card">
+          <div class="eyebrow">YOUR COLONY</div>
+          <div class="colony-name-row">
+            <span class="nation-dot" id="playerDot"></span>
+            <h2 id="playerName">Unnamed Colony</h2>
+          </div>
+          <div class="species-line" id="playerSpecies">Species</div>
+          <div class="stat-grid">
+            <div><span>Territory</span><b id="territoryValue">1</b></div>
+            <div><span>Defense</span><b id="defenseValue">0</b></div>
+            <div><span>Economy</span><b id="economyValue">0</b></div>
+            <div><span>Stability</span><b id="stabilityValue">100%</b></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="tab-row">
+            <button class="side-tab active" data-side="overview">Command</button>
+            <button class="side-tab" data-side="build">Build</button>
+            <button class="side-tab" data-side="military">Military</button>
+          </div>
+          <div id="sideContent"></div>
+        </section>
+
+        <section class="panel history-panel">
+          <div class="panel-title-row">
+            <h3>Colony Chronicle</h3>
+            <button class="small-btn" id="clearHistoryBtn">Clear</button>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </section>
+      </aside>
+
+      <section class="world-wrap">
+        <div class="view-tabs">
+          <button class="view-tab active" data-view="world">World Map</button>
+          <button class="view-tab" data-view="nest">Nest Builder</button>
+          <button class="view-tab" data-view="relations">Relations</button>
+        </div>
+
+        <div class="canvas-stage" id="canvasStage">
+          <canvas id="worldCanvas"></canvas>
+          <canvas id="nestCanvas" class="hidden"></canvas>
+
+          <div class="map-legend" id="mapLegend">
+            <span><i class="legend-box food"></i>Foodland</span>
+            <span><i class="legend-box fiber"></i>Fiberland</span>
+            <span><i class="legend-box brood"></i>Broodland</span>
+            <span><i class="legend-box neutral"></i>Unclaimed</span>
+          </div>
+
+          <div class="selection-card hidden" id="selectionCard"></div>
+          <div class="toast-stack" id="toastStack"></div>
+        </div>
+
+        <div class="relations-view hidden" id="relationsView"></div>
+      </section>
+
+      <aside class="sidebar right-panel">
+        <section class="panel">
+          <div class="panel-title-row">
+            <h3>World Powers</h3>
+            <span class="tiny-label" id="worldStatus">6 colonies</span>
+          </div>
+          <div id="powerList" class="power-list"></div>
+        </section>
+
+        <section class="panel">
+          <h3>Active Wars</h3>
+          <div id="warList" class="war-list"></div>
+        </section>
+
+        <section class="panel compact-panel">
+          <h3>Controls</h3>
+          <p>Tap a territory to inspect it. Tap adjacent unclaimed land to expand. Enemy land can be attacked during war.</p>
+          <p>On the nest screen, choose a structure and tap a grid tile to build it.</p>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="startModal">
+    <div class="modal start-modal">
+      <div class="eyebrow">FOUND A COLONY</div>
+      <h1>HIVEFALL</h1>
+      <p class="lead">Build a nest. Claim territory. Trade, ally, betray, invade, and survive the politics of a living insect world.</p>
+
+      <label class="field-label" for="colonyNameInput">Colony name</label>
+      <input id="colonyNameInput" maxlength="24" value="Blackroot" />
+
+      <div class="field-label">Choose species</div>
+      <div class="species-grid" id="speciesGrid"></div>
+
+      <button class="primary-btn" id="startGameBtn">Found Colony</button>
+      <button class="ghost-btn" id="loadGameBtn">Load Saved Colony</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="helpModal">
+    <div class="modal help-modal">
+      <button class="modal-close" id="closeHelpBtn">×</button>
+      <div class="eyebrow">FIELD MANUAL</div>
+      <h2>How Hivefall Works</h2>
+      <div class="help-grid">
+        <div><b>Expand</b><p>Claim neutral regions touching your borders. Regions produce resources every year.</p></div>
+        <div><b>Build</b><p>Nurseries grow population, barracks grow armies, farms feed everyone, and walls strengthen defense.</p></div>
+        <div><b>Diplomacy</b><p>Trade, sign pacts, form alliances, or declare war. AI colonies remember what you do.</p></div>
+        <div><b>War</b><p>Attack connected enemy territory. Armies, local defense, structures, and species traits determine battles.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
